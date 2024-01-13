@@ -46,7 +46,7 @@ elif time_horizon == "6 months":
 news_api_key = "5843e8b1715a4c1fb6628befb47ca1e8"
 
 # Fetch news data
-query = "(financial market OR economy) AND India"
+query = "(financial market OR economy) AND (India OR Indian)"
 news_data = get_news(news_api_key, query, start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
 
 # List to store trending topics and their scores
