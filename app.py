@@ -42,7 +42,7 @@ elif time_horizon == "6 months":
     start_date = end_date - timedelta(days=180)
 
 # API Key for News API (replace with your own key)
-news_api_key = "YOUR_NEWS_API_KEY"
+news_api_key = "5843e8b1715a4c1fb6628befb47ca1e8"
 
 # Fetch news data
 query = "finance OR economic OR business AND India"
