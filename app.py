@@ -3,7 +3,7 @@ import requests
 from datetime import datetime, timedelta
 
 # Function to fetch news from News API
-def get_news(api_key, query, from_date, to_date, country="in"):
+def get_news(api_key, query, from_date, to_date):
     base_url = "https://newsapi.org/v2/everything"
     params = {
         "apiKey": api_key,
@@ -12,7 +12,6 @@ def get_news(api_key, query, from_date, to_date, country="in"):
         "to": to_date,
         "language": "en",
         "sortBy": "popularity",
-        "country": country,
     }
     response = requests.get(base_url, params=params)
     return response.json()
@@ -25,7 +24,7 @@ def analyze_sentiment(text):
     return "Positive" if "good" in text.lower() else "Negative"
 
 # Streamlit App
-st.title("Indian Economic and Financial News Sentiment Analysis")
+st.title("Indian Financial News Sentiment Analysis")
 
 # Sidebar for user input
 st.sidebar.header("Options")
@@ -46,27 +45,23 @@ elif time_horizon == "6 months":
 news_api_key = "5843e8b1715a4c1fb6628befb47ca1e8"
 
 # Fetch news data
-query = "(finance OR economic OR business) AND (India OR Indian)"
+query = "(finance OR economic OR business) AND India"
 news_data = get_news(news_api_key, query, start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
 
 # List to store trending topics and their scores
 trending_topics = []
 
 # Display news headlines and sentiment analysis
-st.subheader(f"Indian Economic and Financial News Headlines for {time_horizon} ({start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')})")
+st.subheader(f"News Headlines for {time_horizon} ({start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')})")
 
 for article in news_data.get("articles", []):
     title = article.get("title", "")
     description = article.get("description", "")
+    sentiment = analyze_sentiment(title + " " + description)
     
-    # Skip articles without titles or descriptions
-    if not title or not description:
-        continue
-    
-    # Append topic and sentiment to the list
-    topic = f"{title}. {description}"
-    sentiment = analyze_sentiment(topic)
-    trending_topics.append({"Topic": topic, "Sentiment": sentiment})
+    # Append topic and sentiment to the list if it contains relevant keywords
+    if any(keyword in title.lower() or keyword in description.lower() for keyword in ["finance", "economic", "business"]):
+        trending_topics.append({"Topic": title, "Sentiment": sentiment})
 
     st.write(f"**Title:** {title}")
     st.write(f"**Description:** {description}")
