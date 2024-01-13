@@ -48,6 +48,9 @@ news_api_key = "5843e8b1715a4c1fb6628befb47ca1e8"
 query = "economic AND financial AND market AND India"
 news_data = get_news(news_api_key, query, start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
 
+# List to store trending topics and their scores
+trending_topics = []
+
 # Display news headlines and sentiment analysis
 st.subheader(f"News Headlines for {time_horizon} ({start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')})")
 
@@ -56,7 +59,14 @@ for article in news_data.get("articles", []):
     description = article.get("description", "")
     sentiment = analyze_sentiment(title + " " + description)
     
+    # Append topic and sentiment to the list
+    trending_topics.append({"Topic": title, "Sentiment": sentiment})
+
     st.write(f"**Title:** {title}")
     st.write(f"**Description:** {description}")
     st.write(f"**Sentiment:** {sentiment}")
     st.write("---")
+
+# Display a table of trending topics at the end
+st.subheader("Trending Topics with Scores")
+st.table(trending_topics)
