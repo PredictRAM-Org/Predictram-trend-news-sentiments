@@ -8,7 +8,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 nltk.download('vader_lexicon')
 
 # Function to fetch news from News API
-def get_news(api_key, query, from_date, to_date):
+def get_news(api_key, query, from_date, to_date, country="in"):
     base_url = "https://newsapi.org/v2/everything"
     params = {
         "apiKey": api_key,
@@ -17,6 +17,7 @@ def get_news(api_key, query, from_date, to_date):
         "to": to_date,
         "language": "en",
         "sortBy": "popularity",
+        "country": country,
     }
     response = requests.get(base_url, params=params)
     return response.json()
@@ -35,7 +36,7 @@ def analyze_sentiment(text):
         return "Neutral"
 
 # Streamlit App
-st.title("Indian Financial News Sentiment Analysis")
+st.title("Indian Finance and Economy News Sentiment Analysis")
 
 # Sidebar for user input
 st.sidebar.header("Options")
@@ -56,14 +57,14 @@ elif time_horizon == "6 months":
 news_api_key = "5843e8b1715a4c1fb6628befb47ca1e8"
 
 # Fetch news data
-query = "(finance OR economic OR business) AND India"
+query = "(finance OR economic) AND (India OR Indian)"
 news_data = get_news(news_api_key, query, start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
 
 # List to store trending topics and their scores
 trending_topics = []
 
 # Display news headlines and sentiment analysis
-st.subheader(f"News Headlines for {time_horizon} ({start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')})")
+st.subheader(f"Indian Finance and Economy News Headlines for {time_horizon} ({start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')})")
 
 for article in news_data.get("articles", []):
     title = article.get("title", "")
@@ -71,7 +72,7 @@ for article in news_data.get("articles", []):
     sentiment = analyze_sentiment(title + " " + description)
     
     # Append topic and sentiment to the list if it contains relevant keywords
-    if any(keyword in title.lower() or keyword in description.lower() for keyword in ["finance", "economic", "business"]):
+    if any(keyword in title.lower() or keyword in description.lower() for keyword in ["finance", "economic"]):
         trending_topics.append({"Topic": title, "Sentiment": sentiment})
 
     st.write(f"**Title:** {title}")
