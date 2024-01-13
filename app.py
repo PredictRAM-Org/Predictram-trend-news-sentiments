@@ -58,11 +58,15 @@ st.subheader(f"Indian Economic and Financial News Headlines for {time_horizon} (
 for article in news_data.get("articles", []):
     title = article.get("title", "")
     description = article.get("description", "")
-    sentiment = analyze_sentiment(title + " " + description)
     
-    # Append topic and sentiment to the list if it contains relevant keywords
-    if any(keyword in title.lower() or keyword in description.lower() for keyword in ["finance", "economic", "business"]):
-        trending_topics.append({"Topic": title, "Sentiment": sentiment})
+    # Skip articles without titles or descriptions
+    if not title or not description:
+        continue
+    
+    # Append topic and sentiment to the list
+    topic = f"{title}. {description}"
+    sentiment = analyze_sentiment(topic)
+    trending_topics.append({"Topic": topic, "Sentiment": sentiment})
 
     st.write(f"**Title:** {title}")
     st.write(f"**Description:** {description}")
