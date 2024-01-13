@@ -42,10 +42,10 @@ elif time_horizon == "6 months":
     start_date = end_date - timedelta(days=180)
 
 # API Key for News API (replace with your own key)
-news_api_key = "5843e8b1715a4c1fb6628befb47ca1e8"
+news_api_key = "YOUR_NEWS_API_KEY"
 
 # Fetch news data
-query = "economic AND financial AND market AND India"
+query = "finance OR economic OR business AND India"
 news_data = get_news(news_api_key, query, start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
 
 # List to store trending topics and their scores
@@ -59,8 +59,9 @@ for article in news_data.get("articles", []):
     description = article.get("description", "")
     sentiment = analyze_sentiment(title + " " + description)
     
-    # Append topic and sentiment to the list
-    trending_topics.append({"Topic": title, "Sentiment": sentiment})
+    # Append topic and sentiment to the list if it contains relevant keywords
+    if any(keyword in title.lower() or keyword in description.lower() for keyword in ["finance", "economic", "business"]):
+        trending_topics.append({"Topic": title, "Sentiment": sentiment})
 
     st.write(f"**Title:** {title}")
     st.write(f"**Description:** {description}")
