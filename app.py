@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 from datetime import datetime, timedelta
+from nltk.sentiment import SentimentIntensityAnalyzer
 
 # Function to fetch news from News API
 def get_news(api_key, query, from_date, to_date):
@@ -16,12 +17,18 @@ def get_news(api_key, query, from_date, to_date):
     response = requests.get(base_url, params=params)
     return response.json()
 
-# Function to perform sentiment analysis
+# Function to perform sentiment analysis using VADER
 def analyze_sentiment(text):
-    # Add your sentiment analysis logic here (using NLP libraries, models, etc.)
-    # This could be a simple positive/negative sentiment analysis for demonstration purposes.
-    # You might want to use a more sophisticated model for a real-world scenario.
-    return "Positive" if "good" in text.lower() else "Negative"
+    sid = SentimentIntensityAnalyzer()
+    sentiment_score = sid.polarity_scores(text)
+
+    # Assign sentiment based on compound score
+    if sentiment_score['compound'] >= 0.05:
+        return "Positive"
+    elif sentiment_score['compound'] <= -0.05:
+        return "Negative"
+    else:
+        return "Neutral"
 
 # Streamlit App
 st.title("Indian Financial News Sentiment Analysis")
