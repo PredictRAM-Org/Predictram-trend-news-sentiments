@@ -1,7 +1,11 @@
 import streamlit as st
 import requests
 from datetime import datetime, timedelta
+import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
+
+# Download NLTK data for VADER sentiment analysis
+nltk.download('vader_lexicon')
 
 # Function to fetch news from News API
 def get_news(api_key, query, from_date, to_date):
@@ -22,7 +26,7 @@ def analyze_sentiment(text):
     sid = SentimentIntensityAnalyzer()
     sentiment_score = sid.polarity_scores(text)
 
-    # Assign sentiment based on compound score
+    # Assign sentiment based on the compound score
     if sentiment_score['compound'] >= 0.05:
         return "Positive"
     elif sentiment_score['compound'] <= -0.05:
